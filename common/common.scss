@@ -390,7 +390,7 @@ textarea,
   align-items: center;
   margin-bottom: 8px;
   padding-bottom: 0;
-  border-bottom: 1px solid var(--anfra-rule);
+  border-bottom: 0;
 }
 
 // tabs: quiet text; the active one is ink with the violet underline that
@@ -473,6 +473,13 @@ textarea,
 .sidebar-container {
   background: var(--anfra-paper);
   border-right: 1px solid var(--anfra-rule);
+}
+
+body:not(.has-sidebar-page) {
+  .sidebar-wrapper,
+  .sidebar-container {
+    border-right: 0;
+  }
 }
 
 .sidebar-section-header-text,
@@ -776,6 +783,14 @@ aside.onebox {
   border: 1px solid var(--anfra-rule-strong);
   border-radius: var(--anfra-r-card);
   box-shadow: var(--anfra-e2);
+}
+
+// Discourse keeps an empty #user-card / #group-card in the DOM until a card
+// is opened; don't paint the border/shadow on the empty shell.
+.user-card:empty,
+.group-card:empty {
+  border: 0;
+  box-shadow: none;
 }
 
 .menu-panel {
