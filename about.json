@@ -1,0 +1,39 @@
+{
+  "name": "anfra",
+  "about_url": "https://anfra.ai",
+  "license_url": null,
+  "component": false,
+  "authors": "anfra",
+  "theme_version": "0.1.0",
+  "minimum_discourse_version": "3.2.0",
+  "color_schemes": {
+    "anfra Paper": {
+      "primary": "18141f",
+      "secondary": "f2f0eb",
+      "tertiary": "6e3db5",
+      "quaternary": "6e3db5",
+      "header_background": "f2f0eb",
+      "header_primary": "18141f",
+      "highlight": "e6d8fb",
+      "selected": "f1e9fc",
+      "hover": "e9e6df",
+      "danger": "b42318",
+      "success": "1f7a3d",
+      "love": "8a51d4"
+    },
+    "anfra Ink": {
+      "primary": "f3f1f6",
+      "secondary": "111014",
+      "tertiary": "d4c0fc",
+      "quaternary": "d4c0fc",
+      "header_background": "111014",
+      "header_primary": "f3f1f6",
+      "highlight": "3b2a5c",
+      "selected": "241d31",
+      "hover": "1c1a21",
+      "danger": "f2786e",
+      "success": "6cc68a",
+      "love": "a274f0"
+    }
+  }
+}

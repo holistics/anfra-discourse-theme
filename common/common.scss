@@ -1,0 +1,939 @@
+// anfra for Discourse
+// Paper and ink with one violet, after DESIGN.md in anfra-landing.
+// Colors that Discourse's scheme has no slot for are picked per scheme
+// with dark-light-choose(light, dark), so "anfra Paper" and "anfra Ink"
+// both work from this one file.
+
+// ---------------------------------------------------------------------------
+// Tokens
+// ---------------------------------------------------------------------------
+
+:root {
+  // ground and ink
+  --anfra-paper: var(--secondary);
+  --anfra-paper-deep: #{dark-light-choose(#e9e6df, #18161c)};
+  --anfra-sheet: #{dark-light-choose(#fbfaf7, #1c1a21)};
+  --anfra-ink: var(--primary);
+  --anfra-ink-2: #{dark-light-choose(#48434f, #d9d5e0)};
+  --anfra-ink-3: #{dark-light-choose(#625c69, #cac6d3)};
+  --anfra-rule: #{dark-light-choose(rgba(24, 20, 31, 0.12), #2c2833)};
+  --anfra-rule-strong: #{dark-light-choose(rgba(24, 20, 31, 0.24), #3a3644)};
+
+  // violet: the one accent
+  --anfra-violet: #8a51d4;
+  --anfra-violet-press: #7a43c4;
+  --anfra-violet-text: #{dark-light-choose(#6e3db5, #d4c0fc)};
+  --anfra-violet-tint: #{dark-light-choose(#e6d8fb, #3b2a5c)};
+  --anfra-violet-wash: #{dark-light-choose(#f1e9fc, #241d31)};
+  --anfra-focus: #{dark-light-choose(#8a51d4, #c9a6ff)};
+
+  // shape
+  --anfra-r-sm: 6px;
+  --anfra-r-control: 10px;
+  --anfra-r-card: 14px;
+  --anfra-r-pill: 999px;
+
+  // elevation (dark: a border lifts, not a shadow)
+  --anfra-e1: #{dark-light-choose(
+      "0 1px 0 rgba(24, 20, 31, 0.04), 0 1px 2px rgba(24, 20, 31, 0.06)",
+      "none"
+    )};
+  --anfra-e2: #{dark-light-choose(
+      "0 1px 0 rgba(24, 20, 31, 0.03), 0 18px 40px -18px rgba(24, 20, 31, 0.28), 0 2px 6px -2px rgba(24, 20, 31, 0.08)",
+      "none"
+    )};
+
+  // motion
+  --anfra-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --anfra-t-press: 90ms;
+  --anfra-t-hover: 160ms;
+  --anfra-t-ui: 220ms;
+
+  // hand the brand to Discourse's own variables
+  --font-family: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --heading-font-family: var(--font-family);
+  --d-font-family--monospace: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --d-border-radius: var(--anfra-r-control);
+  --d-border-radius-large: var(--anfra-r-card);
+  --d-button-border-radius: var(--anfra-r-control);
+  --d-input-border-radius: var(--anfra-r-control);
+  --d-nav-pill-border-radius: var(--anfra-r-control);
+  --d-sidebar-highlight-background: var(--anfra-violet-wash);
+  --d-sidebar-highlight-color: var(--anfra-violet-text);
+  --d-sidebar-active-background: var(--anfra-violet-wash);
+  --d-sidebar-active-color: var(--anfra-violet-text);
+  --d-selected: var(--anfra-violet-wash);
+  --d-hover: var(--anfra-paper-deep);
+  --shadow-dropdown: var(--anfra-e2);
+  --shadow-menu-panel: var(--anfra-e2);
+  --shadow-card: var(--anfra-e2);
+  --shadow-modal: var(--anfra-e2);
+  --shadow-composer: none;
+  --shadow-header: none;
+}
+
+// ---------------------------------------------------------------------------
+// Type
+// ---------------------------------------------------------------------------
+
+html {
+  font-family: var(--font-family);
+  font-feature-settings: "ss01" on;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: var(--anfra-paper);
+  color: var(--anfra-ink-2);
+}
+
+h1,
+h2,
+h3,
+h4,
+.fancy-title,
+.topic-list .main-link .title,
+.category-title-link {
+  color: var(--anfra-ink);
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+h1,
+#topic-title h1,
+.fancy-title {
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+h2,
+h3 {
+  letter-spacing: -0.025em;
+}
+
+.cooked,
+.d-editor-preview {
+  color: var(--anfra-ink-2);
+  line-height: 1.55;
+  text-wrap: pretty;
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin-top: 1.4em;
+  }
+}
+
+.topic-list .num,
+.topic-list .activity,
+.relative-date,
+.badge-notification,
+.user-stat .value {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: var(--anfra-violet-tint);
+  color: var(--anfra-ink);
+}
+
+// ---------------------------------------------------------------------------
+// Links
+// ---------------------------------------------------------------------------
+
+a {
+  color: var(--anfra-violet-text);
+}
+
+.cooked a:not(.mention):not(.hashtag-cooked):not(.lightbox),
+.d-editor-preview a {
+  text-underline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cooked a:not(.mention):not(.hashtag-cooked):not(.lightbox):hover,
+  .d-editor-preview a:hover {
+    text-decoration: underline;
+  }
+}
+
+// a topic title is ink; only the thing you follow is violet
+.topic-list .main-link a.title,
+.latest-topic-list-item .main-link a.title {
+  color: var(--anfra-ink);
+}
+
+.topic-list .main-link a.title.visited:not(.badge-notification),
+.topic-list .main-link a.title:visited:not(.badge-notification) {
+  color: var(--anfra-ink-3);
+}
+
+// ---------------------------------------------------------------------------
+// Focus
+// ---------------------------------------------------------------------------
+
+:focus-visible {
+  outline: 2px solid var(--anfra-focus);
+  outline-offset: 3px;
+}
+
+// a control keeps its own border on focus: no second ring
+.btn:focus-visible,
+.select-kit-header:focus-visible {
+  box-shadow: none;
+}
+
+// ---------------------------------------------------------------------------
+// Header: paper, one hairline, no shadow
+// ---------------------------------------------------------------------------
+
+.d-header {
+  background: var(--anfra-paper);
+  box-shadow: none;
+  border-bottom: 1px solid var(--anfra-rule);
+
+  .title a,
+  .header-title {
+    color: var(--anfra-ink);
+  }
+
+  .d-header-icons .icon,
+  .d-header-icons .btn-flat {
+    color: var(--anfra-ink-3);
+    border-radius: var(--anfra-r-control);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .d-header .d-header-icons .icon:hover,
+  .d-header .d-header-icons .btn-flat:hover {
+    background: var(--anfra-paper-deep);
+    color: var(--anfra-ink);
+  }
+}
+
+.d-header .d-header-icons .active .icon {
+  background: var(--anfra-sheet);
+  border: 1px solid var(--anfra-rule-strong);
+}
+
+// ---------------------------------------------------------------------------
+// Buttons
+// ---------------------------------------------------------------------------
+
+.btn {
+  font-weight: 500;
+  border-radius: var(--anfra-r-control);
+  transition:
+    background-color var(--anfra-t-hover) var(--anfra-ease-out),
+    border-color var(--anfra-t-hover) var(--anfra-ease-out),
+    color var(--anfra-t-hover) var(--anfra-ease-out),
+    transform var(--anfra-t-press) var(--anfra-ease-out);
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+// secondary: sheet, ruled. Only real default buttons: icon buttons inside
+// fields, menus and headers stay quiet.
+.btn-default,
+.btn.btn-default {
+  background: var(--anfra-sheet);
+  color: var(--anfra-ink);
+  border: 1px solid var(--anfra-rule-strong);
+  box-shadow: none;
+
+  .d-icon {
+    color: var(--anfra-ink-3);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-default:hover {
+    background: var(--anfra-sheet);
+    color: var(--anfra-ink);
+    border-color: var(--anfra-ink-3);
+
+    .d-icon {
+      color: var(--anfra-ink);
+    }
+  }
+}
+
+// primary: the one violet fill, with a border in its own color so it
+// matches an outlined button's size
+.btn-primary,
+.btn.btn-primary {
+  background: var(--anfra-violet);
+  border: 1px solid var(--anfra-violet);
+  color: #fff;
+  box-shadow: none;
+
+  .d-icon {
+    color: #fff;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover,
+  .btn.btn-primary:hover {
+    background: var(--anfra-violet-press);
+    border-color: var(--anfra-violet-press);
+    color: #fff;
+
+    .d-icon {
+      color: #fff;
+    }
+  }
+}
+
+.btn-primary:active,
+.btn-primary.btn-active {
+  background: var(--anfra-violet-press);
+  border-color: var(--anfra-violet-press);
+}
+
+// quiet
+@media (hover: hover) and (pointer: fine) {
+  .btn-flat:hover,
+  .btn-transparent:hover {
+    background: rgba(var(--primary-rgb), 0.05);
+  }
+}
+
+.btn-danger {
+  box-shadow: none;
+}
+
+// ---------------------------------------------------------------------------
+// Inputs
+// ---------------------------------------------------------------------------
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+input[type="url"],
+textarea,
+.select-kit .select-kit-header,
+.d-editor-input {
+  background: var(--anfra-sheet);
+  border: 1px solid var(--anfra-rule-strong);
+  border-radius: var(--anfra-r-control);
+  color: var(--anfra-ink);
+  box-shadow: none;
+
+  &:focus,
+  &.is-focused {
+    border-color: var(--anfra-violet);
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+// search field: one sheet box, the icons inside it are quiet
+.search-menu .search-input {
+  background: var(--anfra-sheet);
+  border: 1px solid var(--anfra-rule-strong);
+  border-radius: var(--anfra-r-control);
+  box-shadow: none;
+
+  &:focus-within {
+    border-color: var(--anfra-violet);
+  }
+
+  input[type="text"],
+  input[type="search"],
+  input#search-term {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .btn,
+  .search-icon,
+  .show-advanced-search {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    color: var(--anfra-ink-3);
+
+    .d-icon {
+      color: var(--anfra-ink-3);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Navigation bar: one row, every control the same height
+// ---------------------------------------------------------------------------
+
+:root {
+  --anfra-nav-h: 36px;
+  // Discourse's own nav variables (3.3+)
+  --d-nav-color: var(--anfra-ink-3);
+  --d-nav-color--hover: var(--anfra-ink);
+  --d-nav-color--active: var(--anfra-ink);
+  --d-nav-bg-color: transparent;
+  --d-nav-bg-color--hover: transparent;
+  --d-nav-bg-color--active: transparent;
+  --d-nav-underline-height: 2px;
+  --d-nav-border-color--active: var(--anfra-violet);
+}
+
+.navigation-container {
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 0;
+  border-bottom: 1px solid var(--anfra-rule);
+}
+
+// tabs: quiet text; the active one is ink with the violet underline that
+// Discourse already draws. No box, no fill
+.nav-pills {
+  gap: 4px;
+
+  > li > a,
+  > li button {
+    display: inline-flex;
+    align-items: center;
+    height: var(--anfra-nav-h);
+    padding: 0 10px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    color: var(--anfra-ink-3);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: color var(--anfra-t-hover) var(--anfra-ease-out);
+  }
+
+  > li > a.active,
+  > li button.active {
+    background: transparent;
+    box-shadow: none;
+    color: var(--anfra-ink);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav-pills > li > a:hover,
+  .nav-pills > li button:hover {
+    background: transparent;
+    color: var(--anfra-ink);
+  }
+}
+
+// category and tag dropdowns: outlined, small, same height as the tabs
+.category-breadcrumb {
+  gap: 8px;
+
+  .select-kit .select-kit-header,
+  .select-kit.combo-box .select-kit-header {
+    height: var(--anfra-nav-h);
+    min-height: var(--anfra-nav-h);
+    padding: 0 10px 0 12px;
+    background: var(--anfra-sheet);
+    border: 1px solid var(--anfra-rule-strong);
+    border-radius: var(--anfra-r-control);
+    color: var(--anfra-ink-2);
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    .d-icon {
+      color: var(--anfra-ink-3);
+    }
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .category-breadcrumb .select-kit .select-kit-header:hover {
+    border-color: var(--anfra-ink-3);
+  }
+}
+
+.navigation-controls {
+  gap: 8px;
+
+  .btn {
+    height: var(--anfra-nav-h);
+    min-height: var(--anfra-nav-h);
+    padding: 0 14px;
+    font-size: 0.875rem;
+  }
+}
+
+.sidebar-wrapper,
+.sidebar-container {
+  background: var(--anfra-paper);
+  border-right: 1px solid var(--anfra-rule);
+}
+
+.sidebar-section-header-text,
+.sidebar-section-header .sidebar-section-header-text {
+  font-family: var(--d-font-family--monospace);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--anfra-ink-3);
+}
+
+.sidebar-section-link-wrapper .sidebar-section-link {
+  border-radius: var(--anfra-r-control);
+  color: var(--anfra-ink-2);
+
+  &.active {
+    background: var(--anfra-violet-wash);
+    color: var(--anfra-violet-text);
+    font-weight: 500;
+
+    .sidebar-section-link-prefix .d-icon {
+      color: var(--anfra-violet-text);
+    }
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sidebar-section-link-wrapper .sidebar-section-link:not(.active):hover {
+    background: var(--anfra-paper-deep);
+    color: var(--anfra-ink);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Topic list: a ruled list, not cards
+// ---------------------------------------------------------------------------
+
+.topic-list {
+  th {
+    border-bottom: 1px solid var(--anfra-rule-strong);
+    padding-top: 12px;
+    padding-bottom: 10px;
+  }
+
+  // column labels: the header cells and the sort buttons inside them
+  th,
+  th button,
+  th span,
+  .topic-list-header .topic-list-data,
+  .topic-list-header .topic-list-data * {
+    font-family: var(--d-font-family--monospace);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--anfra-ink-3);
+  }
+
+  .topic-list-item,
+  > tbody > tr {
+    border-bottom: 1px solid var(--anfra-rule);
+  }
+
+  .topic-list-item.selected,
+  .topic-list-item.last-visit {
+    background: var(--anfra-violet-wash);
+  }
+
+  .topic-excerpt {
+    color: var(--anfra-ink-3);
+  }
+
+  .num,
+  .activity,
+  .posters {
+    color: var(--anfra-ink-3);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .topic-list .topic-list-item:hover {
+    background: var(--anfra-sheet);
+  }
+}
+
+// unread counts are the thing to follow
+.badge-notification.new-topic,
+.badge-notification.unread-posts,
+.badge-notification.new-posts {
+  background: var(--anfra-violet);
+  color: #fff;
+  border-radius: var(--anfra-r-pill);
+}
+
+// ---------------------------------------------------------------------------
+// Categories and tags: small UI, square-ish
+// ---------------------------------------------------------------------------
+
+.badge-category__wrapper .badge-category,
+.badge-category-bg {
+  border-radius: var(--anfra-r-sm);
+}
+
+.badge-category__wrapper .badge-category__name {
+  color: var(--anfra-ink-2);
+  font-weight: 500;
+}
+
+.discourse-tag.box,
+.discourse-tag.bullet,
+.discourse-tag.simple {
+  background: var(--anfra-paper-deep);
+  color: var(--anfra-ink-3);
+  border-radius: var(--anfra-r-sm);
+  font-family: var(--d-font-family--monospace);
+  font-size: 0.75rem;
+}
+
+.category-boxes .category-box-inner,
+.category-boxes-with-topics .category-box-inner,
+.category-list .category {
+  background: var(--anfra-sheet);
+  border: 1px solid var(--anfra-rule);
+  border-radius: var(--anfra-r-card);
+}
+
+// ---------------------------------------------------------------------------
+// Posts
+// ---------------------------------------------------------------------------
+
+.topic-post {
+  .topic-body,
+  .topic-avatar {
+    border-top: 1px solid var(--anfra-rule);
+  }
+
+  .names .first a,
+  .names .username a {
+    color: var(--anfra-ink);
+    font-weight: 600;
+  }
+
+  .post-date,
+  .post-info {
+    color: var(--anfra-ink-3);
+  }
+}
+
+// staff and original poster: violet text, nothing louder
+.topic-post .names .staff a,
+.topic-post .names .moderator a {
+  color: var(--anfra-violet-text);
+}
+
+nav.post-controls {
+  .actions button {
+    color: var(--anfra-ink-3);
+    border-radius: var(--anfra-r-control);
+  }
+
+  .actions button.has-like .d-icon,
+  .actions button.liked .d-icon,
+  .actions button.toggle-like.has-like .d-icon {
+    color: var(--anfra-violet);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  nav.post-controls .actions button:hover {
+    background: var(--anfra-paper-deep);
+    color: var(--anfra-ink);
+  }
+}
+
+// timeline: a dimension line, the progress in violet
+.timeline-container .topic-timeline {
+  .timeline-scrollarea {
+    border-left-color: var(--anfra-rule-strong);
+  }
+
+  .timeline-handle {
+    background: var(--anfra-violet);
+    border-radius: 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Inside a post: code, quotes, tables, oneboxes
+// ---------------------------------------------------------------------------
+
+.cooked,
+.d-editor-preview {
+  code {
+    font-family: var(--d-font-family--monospace);
+    font-size: 0.8125rem;
+    background: var(--anfra-paper-deep);
+    color: var(--anfra-ink);
+    border-radius: var(--anfra-r-sm);
+    padding: 0.1em 0.35em;
+    white-space: nowrap;
+  }
+
+  pre {
+    background: var(--anfra-sheet);
+    border: 1px solid var(--anfra-rule);
+    border-radius: var(--anfra-r-card);
+    overflow: hidden;
+
+    code {
+      background: transparent;
+      font-size: 0.78125rem;
+      line-height: 1.6;
+      padding: 16px;
+      white-space: pre;
+      max-height: none;
+    }
+  }
+
+  blockquote {
+    background: transparent;
+    border-left: 2px solid var(--anfra-rule-strong);
+    color: var(--anfra-ink-2);
+  }
+
+  table {
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+
+    th {
+      font-family: var(--d-font-family--monospace);
+      font-size: 0.75rem;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--anfra-ink-3);
+      border-bottom: 1px solid var(--anfra-rule-strong);
+    }
+
+    td {
+      border-bottom: 1px solid var(--anfra-rule);
+    }
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--anfra-rule);
+  }
+}
+
+aside.quote {
+  .title {
+    background: var(--anfra-paper-deep);
+    border-left: 2px solid var(--anfra-rule-strong);
+    border-radius: var(--anfra-r-control) var(--anfra-r-control) 0 0;
+  }
+
+  blockquote {
+    background: var(--anfra-sheet);
+    border-left: 2px solid var(--anfra-rule-strong);
+    border-radius: 0 0 var(--anfra-r-control) var(--anfra-r-control);
+  }
+}
+
+aside.onebox {
+  background: var(--anfra-sheet);
+  border: 1px solid var(--anfra-rule);
+  border-radius: var(--anfra-r-card);
+  box-shadow: var(--anfra-e1);
+}
+
+.mention,
+.hashtag-cooked {
+  background: var(--anfra-violet-wash);
+  color: var(--anfra-violet-text);
+  border-radius: var(--anfra-r-sm);
+}
+
+// a solved answer (discourse-solved) uses the one accent, not green
+.cooked .solved-panel,
+.accepted-answer {
+  border-color: var(--anfra-violet);
+}
+
+// ---------------------------------------------------------------------------
+// Floating surfaces: menus, cards, modals
+// sheet, one rule-strong edge, e2 in light, border only in dark
+// ---------------------------------------------------------------------------
+
+.menu-panel,
+.user-card,
+.group-card,
+.fk-d-menu,
+.select-kit .select-kit-body,
+.autocomplete,
+.d-modal__container,
+.popup-menu,
+.fk-d-tooltip__content,
+.fk-d-tooltip {
+  background: var(--anfra-sheet);
+  border: 1px solid var(--anfra-rule-strong);
+  border-radius: var(--anfra-r-card);
+  box-shadow: var(--anfra-e2);
+}
+
+.menu-panel {
+  overflow: hidden;
+}
+
+.d-modal__header {
+  border-bottom: 1px solid var(--anfra-rule);
+
+  .d-modal__title-text {
+    color: var(--anfra-ink);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+}
+
+.d-modal__footer {
+  border-top: 1px solid var(--anfra-rule);
+}
+
+.d-modal__backdrop,
+.modal-backdrop {
+  background: rgba(24, 20, 31, 0.4);
+}
+
+// menus enter from 0.95 at least, ease-out, under 300ms
+.menu-panel,
+.user-card,
+.fk-d-menu {
+  animation: anfra-pop var(--anfra-t-ui) var(--anfra-ease-out);
+}
+
+@keyframes anfra-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Composer
+// ---------------------------------------------------------------------------
+
+#reply-control {
+  background: var(--anfra-sheet);
+  border-top: 1px solid var(--anfra-rule-strong);
+  box-shadow: var(--anfra-e2);
+
+  .grippie {
+    background: var(--anfra-paper-deep);
+  }
+
+  .d-editor-button-bar {
+    border-bottom: 1px solid var(--anfra-rule);
+  }
+
+  .d-editor-preview-wrapper {
+    background: var(--anfra-paper);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Banners and alerts: no extra status colors
+// ---------------------------------------------------------------------------
+
+#banner,
+.alert.alert-info,
+.global-notice .alert-global-notice {
+  background: var(--anfra-violet-wash);
+  color: var(--anfra-ink);
+  border: 1px solid var(--anfra-violet-tint);
+  border-radius: var(--anfra-r-card);
+}
+
+// the welcome banner is a frame on graph paper: square, lines every 24px
+// and 120px, faded toward the title and search in its middle
+.welcome-banner,
+.custom-search-banner {
+  margin-bottom: 24px;
+  padding: 40px 16px 44px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+
+  .welcome-banner__wrap,
+  .custom-search-banner-wrap {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  h1,
+  .welcome-banner__title {
+    color: var(--anfra-ink);
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .search-menu {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+}
+
+.welcome-banner,
+.custom-search-banner {
+  background-color: var(--anfra-paper);
+  background-image:
+    radial-gradient(ellipse 60% 70% at 50% 50%, var(--anfra-paper) 30%, transparent 100%),
+    linear-gradient(rgba(var(--primary-rgb), 0.085) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--primary-rgb), 0.085) 1px, transparent 1px),
+    linear-gradient(rgba(var(--primary-rgb), 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--primary-rgb), 0.045) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    120px 120px,
+    120px 120px,
+    24px 24px,
+    24px 24px;
+  border-bottom: 1px solid var(--anfra-rule);
+}
+
+// ---------------------------------------------------------------------------
+// User and group pages
+// ---------------------------------------------------------------------------
+
+.user-main .about,
+.user-content-wrapper .user-primary-navigation,
+.group-details-container {
+  border-color: var(--anfra-rule);
+}
+
+.user-primary-navigation .nav-pills > li a.active {
+  background: var(--anfra-sheet);
+}
+
+// ---------------------------------------------------------------------------
+// Reduced motion
+// ---------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:active:not(:disabled) {
+    transform: none;
+  }
+
+  .menu-panel,
+  .user-card,
+  .fk-d-menu {
+    animation: anfra-fade 150ms linear;
+  }
+
+  @keyframes anfra-fade {
+    from {
+      opacity: 0;
+    }
+  }
+}
