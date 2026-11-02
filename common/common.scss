@@ -387,28 +387,10 @@ textarea,
 
 .navigation-container {
   gap: 12px;
-  align-items: flex-end;
+  align-items: center;
   margin-bottom: 8px;
   padding-bottom: 0;
   border-bottom: 1px solid var(--anfra-rule);
-
-  // chips and the button float clear of the hairline; the tabs sit on it
-  // so the active underline lands on the rule
-  .category-breadcrumb,
-  .navigation-controls {
-    padding-bottom: 10px;
-  }
-}
-
-// breathing room between the content and the viewport edges
-#main-outlet-wrapper {
-  padding-inline: 24px;
-}
-
-@media (max-width: 700px) {
-  #main-outlet-wrapper {
-    padding-inline: 16px;
-  }
 }
 
 // tabs: quiet text; the active one is ink with the violet underline that
