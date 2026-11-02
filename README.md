@@ -4,9 +4,13 @@ Paper and ink with one violet, after `DESIGN.md` in this repo.
 
 ## Install
 
-Admin → Customize → Themes → Install → "From your device": zip this folder
-(`zip -r anfra-discourse.zip .`) and upload it, or push it to its own git repo
-and install "From a git repository".
+Admin → Appearance → Themes → Install → "From a git repository", and paste:
+
+```
+https://github.com/holistics/anfra-discourse-theme
+```
+
+To get later changes, open the theme and click "Check for updates".
 
 The theme brings two color schemes. Set them under the theme's settings:
 
